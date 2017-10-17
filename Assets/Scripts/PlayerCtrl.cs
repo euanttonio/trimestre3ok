@@ -23,6 +23,8 @@ public class PlayerCtrl : MonoBehaviour {
 
 	Animator anim;
 
+	bool isJumping = false;
+
 
 	// Use this for initialization
 	void Start () {
@@ -46,6 +48,8 @@ public class PlayerCtrl : MonoBehaviour {
 		if (Input.GetButtonDown("Jump")) {
 			Jump();
 		}
+
+		ShowFalling();
 	}
 
 	void MoveHorizontal(float speed) {
@@ -57,16 +61,34 @@ public class PlayerCtrl : MonoBehaviour {
 		else if (speed > 0f) {
 			sr.flipX = false;
 		}
-
-		anim.SetInteger("State", 2);
+		if(!isJumping){
+			anim.SetInteger("State", 2);
+		}
+		
 	}
 
 	void StopMovingHorizontal() {
 		rb.velocity = new Vector2(0f, rb.velocity.y);
-		anim.SetInteger("State", 0);
+		if(!isJumping){
+			anim.SetInteger("State", 0);
+		}
+	}
+
+	void ShowFalling() {
+		if (rb.velocity.y < 0f) {
+			anim.SetInteger("State", 3);
+		}
 	}
 
 	void Jump() {
+		isJumping = true;
 		rb.AddForce(new Vector2(0f, jumpSpeed));
+		anim.SetInteger("State", 1);
+	}
+
+	void OnCollisionEnter2D(Collision2D other) {
+		if(other.gameObject.layer == LayerMask.NameToLayer("Ground")){
+			isJumping = false;
+		}
 	}
 }
