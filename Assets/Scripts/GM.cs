@@ -6,11 +6,15 @@ public class GM : MonoBehaviour {
 
     public static GM instance = null;
 
-    public float yMinLive = -10f;
+    public float yMinLive = -7f;
 
     public Transform spawnPoint;
 
     public GameObject playerPrefab;
+
+    public UI ui;
+
+    GameData data = new GameData();
 
     PlayerCtrl player;
 
@@ -23,12 +27,14 @@ public class GM : MonoBehaviour {
         }
     }
 
+    // Use this for initialization
     void Start() {
         if (player == null) {
             RespawnPlayer();
         }
     }
 
+    // Update is called once per frame
     void Update() {
         if (player == null) {
             GameObject obj = GameObject.FindGameObjectWithTag("Player");
@@ -36,11 +42,19 @@ public class GM : MonoBehaviour {
                 player = obj.GetComponent<PlayerCtrl>();
             }
         }
+        DisplayHudData();
+    }
+
+    void DisplayHudData() {
+        ui.hud.txtcoinCount.text = "x " + data.coinCount;
+    }
+
+    public void IncrementCoinCount() {
+        data.coinCount++;
     }
 
     public void RespawnPlayer() {
         Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-
     }
 
     public void KillPlayer() {
